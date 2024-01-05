@@ -1,6 +1,8 @@
 package toyproject.resource.service;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import toyproject.resource.dto.JoinDTO;
 import toyproject.resource.entity.UserEntity;
@@ -10,11 +12,11 @@ import toyproject.resource.repository.UserRepository;
 public class JoinService {
 
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     public JoinService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     public void joinProcess(JoinDTO joinDTO) {
@@ -32,7 +34,7 @@ public class JoinService {
         UserEntity user = new UserEntity();
 
         user.setUsername(username);
-        user.setPassword(bCryptPasswordEncoder.encode(password));
+        user.setPassword(passwordEncoder.encode(password));
         user.setRole("ROLE_ADMIN");
 
         userRepository.save(user);
